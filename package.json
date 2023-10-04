@@ -9,8 +9,8 @@
   },
   "author": "Joel",
   "license": "ISC",
-  "workspaces": "packages/*",
+  "workspaces": ["packages/*"],
   "dependencies": {
-    "create-react-app": "^1.2.1"
+    "create-react-a pp": "^1.2.1"
   }
 }
