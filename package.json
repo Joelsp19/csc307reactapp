@@ -9,6 +9,7 @@
   },
   "author": "Joel",
   "license": "ISC",
+  "workspaces": "packages/*",
   "dependencies": {
     "create-react-app": "^1.2.1"
   }
