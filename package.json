@@ -4,7 +4,7 @@
   "description": "assignment1",
   "main": "index.js",
   "scripts": {
-    "start": "cd ./react-frontend && npm start"
+    "start": "cd ./packages/react-frontend && npm start"
   },
   "author": "Joel",
   "license": "ISC",

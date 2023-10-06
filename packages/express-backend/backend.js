@@ -1,7 +1,9 @@
 import express from "express";
+import cors from "cors";
 
 const app = express();
 const port = 8000;
+
 
 const users = { 
     users_list : [
@@ -58,7 +60,7 @@ const deleteUser = (user) => {
 }
 
 
-
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -83,8 +85,6 @@ app.get('/users', (req, res) => {
     let fin_list = name_list.filter((user) => job_list.includes(user)) 
     let fin_result = {users_list: fin_list}
     res.send(fin_result)
-
-    
 
 });
 
