@@ -24,8 +24,8 @@ import Form from './Form'
       return promise;
     }
 
-    function deleteUser(user) {
-      const url = "http://localhost:8000/users/" + user['id'];
+    function deleteUser(id) {
+      const url = `http://localhost:8000/users/${id}`;
       const promise = fetch(url, {
         method: "DELETE"
       });
@@ -43,14 +43,16 @@ import Form from './Form'
         })
     }
 
-    function removeOneCharacter(id) {
+    function removeOneCharacter(index) {
+      let id = characters[index]['id'];
       deleteUser(id)
-        .then((res) => res.status == 204 ?
-            res.json() : undefined 
-        )
+        .then((res) => {
+            if (res.status != 204)
+              throw new Error("Resource not found") 
+        })
         .then(() => {
           const updated = characters.filter((character,i) => {
-            return i !== id
+            return i !== index
           });
           setCharacters(updated);
         })
