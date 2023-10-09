@@ -1,9 +1,33 @@
 import express from "express";
 import cors from "cors";
+ 
 
 const app = express();
 const port = 8000;
 
+//helper functions
+function generateUID(){
+    //need 3 random letters then 3 random numbers
+    const alpha = "abcdefghijklmnopqrstuvwxyz";
+    const num = "0123456789";
+    let uid = "";
+    for (let i = 0; i < 3; i++){
+        uid += alpha.charAt(Math.random() * alpha.length);
+    }
+    for (let j = 0; j< 3; j++){
+        uid += num.charAt(Math.random() * num.length);
+    }
+    //check if unique...
+    /*
+    for (let user of users_list){
+        if (user.get('id') === uid){
+            //uid = generateUID() // for now repeat the process and hope?... fix later
+            return -1;
+        }
+    }
+    */
+    return uid;
+}
 
 const users = { 
     users_list : [
@@ -50,6 +74,7 @@ const findUserById = (id) =>
         .find( (user) => user['id'] === id);
     
 const addUser = (user) => {
+    user['id'] = generateUID();
     users['users_list'].push(user);
     return user;
 }    
@@ -91,8 +116,12 @@ app.get('/users', (req, res) => {
 //adds the user
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    addUser(userToAdd);
-    res.send();
+    let result = addUser(userToAdd);
+    if (result !== undefined){
+        res.status(201).send(result)
+    }else{
+        res.status(400).send(result)
+    }
 });
 
 //deletes the user
@@ -103,7 +132,7 @@ app.delete('/users/:id', (req,res) => {
         res.status(404).send('Resource not found.');
     } else {
         deleteUser(result)
-        res.send()
+        res.status(204).send(result)
     }
 })
 

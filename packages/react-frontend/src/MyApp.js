@@ -6,15 +6,6 @@ import Form from './Form'
   function MyApp() {
     const [characters,setCharacters] = useState([]);
 
- 
-    //state
-    function removeOneCharacter (index) {
-      const updated = characters.filter((character,i) => {
-        return i !== index
-      });
-      setCharacters(updated);
-    }
-
     //promises
     function fetchUsers() {
       const promise = fetch("http://localhost:8000/users");
@@ -33,13 +24,39 @@ import Form from './Form'
       return promise;
     }
 
+    function deleteUser(user) {
+      const url = "http://localhost:8000/users/" + user['id'];
+      const promise = fetch(url, {
+        method: "DELETE"
+      });
+      return promise;
+    }
+
     function updateList(person) { 
       postUser(person)
-        .then(() => setCharacters([...characters, person]))
-        .catch((error) => {
+        .then((res) => res.status == 201 ? 
+            res.json() : undefined 
+        )
+        .then((json) => setCharacters([...characters,json]))
+        .catch((error) => { 
           console.log(error);
         })
     }
+
+    function removeOneCharacter(id) {
+      deleteUser(id)
+        .then((res) => res.status == 204 ?
+            res.json() : undefined 
+        )
+        .then(() => {
+          const updated = characters.filter((character,i) => {
+            return i !== id
+          });
+          setCharacters(updated);
+        })
+        .catch((error) => {console.log(error); });
+    };
+    
 
     useEffect(() => {
       fetchUsers()
