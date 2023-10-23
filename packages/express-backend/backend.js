@@ -1,4 +1,5 @@
 import express from "express";
+import userServices from "./models/user-services.js"
 import cors from "cors";
  
 
@@ -87,31 +88,38 @@ app.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-//gets the user by name or by job
+
+
+//gets the user information given inputs
 app.get('/users', (req, res) => {
-    const name = req.query.name;
-    const job = req.query.job;
-    let name_list = users['users_list'];
-    let job_list = users['users_list'];
-
-    if (name != undefined){
-        name_list = findUserByName(name);
-    }
-    if (job != undefined){
-        job_list = findUserByJob(job);
-    }
-
-    //joins the two lists together --> gives one list with same values in both
-    let fin_list = name_list.filter((user) => job_list.includes(user)) 
-    let fin_result = {users_list: fin_list}
-    res.send(fin_result)
+    const name = req.query.name
+    const job = req.query.job
+    let list = userServices.getUsers(name,job)
+    res.send(list)
 
 });
+
+//gets the user by name
+app.get('/users', (req, res) => {
+    const name = req.query.name
+    let name_list = userServices.findUserByName(name)
+    res.send(name_list)
+
+});
+
+//gets the user by job
+app.get('/users', (req, res) => {
+    const job = req.query.job
+    let job_list = userServices.findUserByJob(job)
+    res.send(job_list)
+
+});
+
 
 //adds the user
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    let result = addUser(userToAdd);
+    let result = userServices.addUser(userToAdd);
     if (result !== undefined){
         res.status(201).send(result)
     }else{
@@ -119,28 +127,30 @@ app.post('/users', (req, res) => {
     }
 });
 
-//deletes the user
-app.delete('/users/:id', (req,res) => {
-    const idToDelete = req.params['id'];
-    let result = findUserById(idToDelete);
-    if (result === undefined){
-        res.status(404).send('Resource not found.');
-    } else {
-        deleteUser(result)
-        res.status(204).send()
-    }
-})
-
 //gets the user by id
 app.get('/users/:id', (req, res) => {
     const id = req.params['id']; //or req.params.id
-    let result = findUserById(id);
+    let result = userServices.findUserById(id);
     if (result === undefined) {
         res.status(404).send('Resource not found.');
     } else {
         res.send(result);
     }
 });
+
+
+//deletes the user by id
+app.delete('/users/:id', (req,res) => {
+    const idToDelete = req.params['id'];
+    let result = userServices.findUserByIdAndDelete(idToDelete);
+    if (result === undefined){
+        res.status(404).send('Resource not found.');
+    } else {
+        res.status(204).send()
+    }
+})
+
+
 
 
 app.listen(port, () => {
